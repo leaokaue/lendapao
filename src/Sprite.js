@@ -1,4 +1,5 @@
 import { GameObject } from "./GameObject";
+import { clamp } from "./helpers/Clamp";
 import { Vector2 } from "./Vector2";
 
 export class Sprite extends GameObject {
@@ -11,6 +12,7 @@ export class Sprite extends GameObject {
     scale,
     position,
     animations,
+    alpha,
     }) {
         super({});
         this.resource = resource;
@@ -22,13 +24,14 @@ export class Sprite extends GameObject {
         this.scale = scale ?? 1;
         this.position = position ?? new Vector2(0,0);
         this.animations = animations ?? null;
+        this.alpha = alpha ?? 1.0;
         this.buildFrameMap();
     }
+    
     buildFrameMap() {
         let frameCount = 0;
         for (let v=0; v < this.vFrames; v++) {
             for (let h=0; h < this.hFrames; h++) {
-                console.log("frame",h,v)
                 this.frameMap.set(
                     frameCount,
                     new Vector2(this.frameSize.x * h,this.frameSize.y * v)
@@ -65,6 +68,9 @@ export class Sprite extends GameObject {
 
         const frameSizeX = this.frameSize.x
         const frameSizeY = this.frameSize.y
+
+        this.alpha = clamp(this.alpha,0,1);
+        ctx.globalAlpha = this.alpha;
 
         ctx.drawImage(
             this.resource.image,

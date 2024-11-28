@@ -12,8 +12,19 @@ class Resources {
             cave: "/sprites/cave.png",
             caveGround: "/sprites/cave-ground.png",
             exit: "/sprites/exit.png",
-            knight: "/sprites/knight-sheet.png",
-            sign : "/sprites/sign.png"
+            knight: "/sprites/knight-sheet-1.png",
+            sign : "/sprites/sign.png",
+            textbox : "/sprites/text-box.png",
+            fontWhite : "/sprites/sprite-font-white.png",
+            portraits : "/sprites/portraits-sheet.png",
+            battleTransition : "/sprites/battle/BattleTransition.png",
+            battleMenuBG : "/sprites/battle/BattleMenuBG.png",
+            battleButton : "/sprites/battle/BattleButton.png",
+            battleButtonArrow : "/sprites/battle/BattleButtonArrow.png",
+            BattleMenuFG : "/sprites/battle/BattleMenuFG.png",
+            battleMenuDetails : "/sprites/battle/BattleMenuBG.png",
+            battleGround0 : "/sprites/battle/MapaBatalha0.png",
+            HUDTest : "/sprites/battle/HUDTest.png",
 
         }
 

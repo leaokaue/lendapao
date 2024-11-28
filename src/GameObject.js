@@ -7,6 +7,8 @@ export class GameObject {
         this.children = [];
         this.parent = null;
         this.hasReadyBeenCalled = false;
+        this.isSolid = false;
+        this.drawLayer = null;
     }
 
     stepEntry(delta,root) {
@@ -20,7 +22,7 @@ export class GameObject {
         this.step(delta,root);
     }
 
-    step(_delta) {
+    step(delta) {
 
     }
 
@@ -34,9 +36,27 @@ export class GameObject {
 
         this.drawImage(ctx,drawPosX,drawPosY);
 
-        this.children.forEach((child) => child.draw(ctx,drawPosX,drawPosY));
+        this.getDrawChildrenOrder().forEach((child) => child.draw(ctx,drawPosX,drawPosY));
 
     }
+
+    getDrawChildrenOrder() {
+        return [...this.children].sort((a,b) => {
+
+            if (a.drawLayer === "FLOOR") {
+                return -1;
+            }
+
+            if (a.drawLayer === "BATTLE") {
+                return 1;
+            }
+
+            // console.log(b.drawLayer)
+
+            return a.position.y > b.position.y ? 1 : -1
+        })
+    }
+
 
     drawImage(ctx,drawPosX,drawPosY) {
 

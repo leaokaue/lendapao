@@ -5,6 +5,7 @@ import { GameObject } from "../../GameObject";
 import { gridCells, isSpaceFree } from "../../helpers/grid";
 import { moveTowards } from "../../helpers/MoveTowards";
 import { DOWN, LEFT, RIGHT, UP } from "../../Input";
+import { randiRange} from "../../helpers/Random";
 import { resources } from "../../Resource";
 import { Sprite } from "../../Sprite";
 import { Vector2 } from "../../Vector2";
@@ -49,14 +50,58 @@ export class Hero extends GameObject {
         this.destinationPosition = this.position.duplicate();
         this.itemPìckupTime = 0;
         this.itemPickupShell = null;
+        this.isLocked = false;
+        this.tilesUntilBattle = randiRange(1,1);
+        this.inDanger = false;
+
 
         events.on("HERO_PICKS_UP_ITEM",this,data => {
           this.onItemPickup(data)
         })
     }
 
+    ready() {
+      events.on("START_TEXT_BOX",this,() => {
+        this.isLocked = true;
+        this.standAnimation()
+      })
+      events.on("END_TEXT_BOX",this,() => {
+        this.isLocked = false;
+        this.standAnimation()
+      })
+      
+      events.on("START_BATTLE",this,() => {
+        this.isLocked = true;
+        console.log("battle start")
+        this.standAnimation()
+      })
+      events.on("END_BATTLE",this,() => {
+        this.isLocked = false;
+        console.log("battle ended")
+        this.standAnimation()
+      })
+
+    }
+
     step(delta,root) {
-      super.step(delta);
+      
+      if (this.isLocked) {
+        return;
+      }
+
+      const input = root.input;
+      if (input?.getActionJustPressed("Space")) {
+
+        const objAtPosition = this.parent.children.find(child => {
+          return child.position.matches(this.position.toNeighbor(this.facingDirection))
+        })
+
+        if (objAtPosition) {
+          events.emit("HERO_REQUESTS_ACTION",objAtPosition);
+
+        }
+      }
+
 
       if (this.itemPìckupTime > 0) {
         this.handleItemPickup(delta)
@@ -67,7 +112,8 @@ export class Hero extends GameObject {
       const hasArrived = distance <= 0;
 
       if (hasArrived) {
-        this.tryMove(root)
+        this.tryDanger(root);
+        this.tryMove(root);
       }
       
       //this.roundPosition()
@@ -101,17 +147,31 @@ export class Hero extends GameObject {
       this.addChild(this.itemPickupShell);
     }
 
-    roundPosition() {
-      let posX = this.body.position.x;
-      let posY = this.body.position.y;
-
-      posX = Math.round(posX);
-      posY = Math.round(posY);
-
-      this.body.position = new Vector2(posX,posY);
-
+    randomizeDangerTiles() {
+      this.tilesUntilBattle = randiRange(5,12);
     }
 
+    tryDanger(root) {
+      if (this.inDanger) {
+        this.inDanger = false;
+        this.tilesUntilBattle -= 1;
+
+        if (this.tilesUntilBattle <= 0) {
+          events.emit("HERO_ENTER_BATTLE",root?.level);
+          this.randomizeDangerTiles();
+          console.log("hero now enters battle");
+        }
+
+      }
+    }
+
+    isSpaceDanger(spaces,x,y) {
+
+      const str = `${x},${y}`;
+      const isSpaceDangerous = spaces.has(str);
+  
+      return isSpaceDangerous;
+    }
 
     tryEmitPosition() {
 
@@ -126,15 +186,15 @@ export class Hero extends GameObject {
     }
 
     tryMove(root){
+        if (this.isLocked) {
+          return;
+        }
+
         const {input} = root;
 
         if (!input.direction) {
       
-          if (this.facingDirection === LEFT) {this.body.animations.play("standLeft")};
-          if (this.facingDirection === RIGHT) {this.body.animations.play("standRight")};
-          if (this.facingDirection === UP) {this.body.animations.play("standUp")};
-          if (this.facingDirection === DOWN) {this.body.animations.play("standDown")};
-      
+          this.standAnimation()
           return;
         }
       
@@ -164,12 +224,33 @@ export class Hero extends GameObject {
       
         this.facingDirection = input.direction ?? this.facingDirection;
       
-        if (isSpaceFree(root.level?.walls,nextX,nextY)) {
+        const spaceIsFree = isSpaceFree(root.level?.walls,nextX,nextY)
+        const isSpaceDangerous = this.isSpaceDanger(root.level?.dangerSpaces,nextX,nextY)
+
+        const solidBodyAtSpace = this.parent.children.find(c => {
+          return c.isSolid && c.position.x === nextX && c.position.y === nextY
+        })
+
+
+        if (isSpaceDangerous) {
+          this.inDanger = true;
+          console.log("in danger")
+        }
+
+
+        if (spaceIsFree && !solidBodyAtSpace) {
           this.destinationPosition.x = nextX;
           this.destinationPosition.y = nextY;
           
         }
       
-      };
+    };
+
+    standAnimation() {
+      if (this.facingDirection === LEFT) {this.body.animations.play("standLeft")};
+      if (this.facingDirection === RIGHT) {this.body.animations.play("standRight")};
+      if (this.facingDirection === UP) {this.body.animations.play("standUp")};
+      if (this.facingDirection === DOWN) {this.body.animations.play("standDown")};
+    }
 
 }

@@ -12,9 +12,14 @@ export class Exit extends GameObject {
         this.addChild(new Sprite({
             resource: resources.images.exit
         }))
+
+        this.drawLayer = "FLOOR";
     }
 
     ready() {
+
+        console.log(this.drawLayer)
+
         events.on("HERO_POSITION",this,pos => {
             //detect overlap
             const roundHeroX = Math.round(pos.x);

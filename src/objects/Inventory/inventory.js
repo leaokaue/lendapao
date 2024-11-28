@@ -10,6 +10,8 @@ export class Inventory extends GameObject {
             position : new Vector2(0,1)
         });
 
+        this.alpha = 1.0;
+        this.drawLayer = "HUD";
         this.nextId = 0;
         this.items = [
             {
@@ -17,13 +19,26 @@ export class Inventory extends GameObject {
                 image: resources.images.rod
             }
         ]
-        
+
+        this.renderInventory()
+    }
+
+    ready() {
+
         events.on("HERO_PICKS_UP_ITEM",this,data => {
             this.addItem(data.image)
             
         })
 
-        this.renderInventory()
+        events.on("HERO_ENTER_BATTLE",this,data => {
+            this.hide()
+            
+        })
+
+        events.on("END_BATTLE",this,data => {
+            this.show()
+            
+        })
     }
 
     renderInventory() {
@@ -33,7 +48,8 @@ export class Inventory extends GameObject {
         this.items.forEach((item,index) => {
             const sprite =  new Sprite({
                 resource: item.image,
-                position: new Vector2(index * 16,0)
+                position: new Vector2(index * 16,0),
+                alpha : this.alpha
                 
             })
             this.addChild(sprite)
@@ -51,6 +67,16 @@ export class Inventory extends GameObject {
 
     removeItem(id) {
         this.items = this.items.filter(item => this.items.id !== id);
+        this.renderInventory()
+    }
+
+    hide() {
+        this.alpha = 0.0
+        this.renderInventory()
+    }
+
+    show() {
+        this.alpha = 1.0
         this.renderInventory()
     }
 }

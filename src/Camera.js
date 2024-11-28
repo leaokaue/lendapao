@@ -8,6 +8,7 @@ export class Camera extends GameObject {
 
         events.on("HERO_POSITION",this,heroPosition => {
            this.moveCamera(heroPosition)
+        //    console.log(heroPosition);
         })
 
         events.on("CHANGE_LEVEL",this, (newMap) => {
@@ -24,7 +25,7 @@ export class Camera extends GameObject {
 
         this.position =  new Vector2(
             -pos.x + halfWidth,
-            -pos.y + halfHeight
+            -pos.y + halfHeight - 8
         )
     }
 }

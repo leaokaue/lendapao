@@ -23,10 +23,11 @@ const mainScene = new Main({
   position: new Vector2(0,0)
 })
 
-mainScene.setLevel(new CaveLevel1())
+mainScene.setLevel(new OutdoorLevel1())
 
 const update = (delta) => {
   mainScene.stepEntry(delta,mainScene);
+  mainScene.input?.update();
 };
 
 const draw = () => {
@@ -41,7 +42,7 @@ const draw = () => {
     ctx.translate(mainScene.camera.position.x,mainScene.camera.position.y);
   }
 
-  mainScene.draw(ctx,0,0);
+  mainScene.drawObjects(ctx,0,0);
 
   ctx.restore();
 

@@ -21,3 +21,4 @@ export function moveTowards(person,destinationPosition,speed) {
 
     return distance;
 }
+
