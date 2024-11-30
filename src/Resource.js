@@ -16,15 +16,17 @@ class Resources {
             sign : "/sprites/sign.png",
             textbox : "/sprites/text-box.png",
             fontWhite : "/sprites/sprite-font-white.png",
+            fontNum : "public/sprites/numberfont-4px.png",
             portraits : "/sprites/portraits-sheet.png",
             battleTransition : "/sprites/battle/BattleTransition.png",
             battleMenuBG : "/sprites/battle/BattleMenuBG.png",
             battleButton : "/sprites/battle/BattleButton.png",
             battleButtonArrow : "/sprites/battle/BattleButtonArrow.png",
-            BattleMenuFG : "/sprites/battle/BattleMenuFG.png",
-            battleMenuDetails : "/sprites/battle/BattleMenuBG.png",
+            battleMenuFG : "/sprites/battle/BattleMenuFG.png",
+            battleMenuDetails : "/sprites/battle/BattleDetails.png",
             battleGround0 : "/sprites/battle/MapaBatalha0.png",
             HUDTest : "/sprites/battle/HUDTest.png",
+            barraVida : "public/sprites/battle/barras/BarraVida.png",
 
         }
 

@@ -82,5 +82,12 @@ export class GameObject {
         })
     }
 
+    hide() {
+        this.alpha = 0.0;
+    }
+
+    show() {
+        this.alpha = 1.0;
+    }    
 
 }

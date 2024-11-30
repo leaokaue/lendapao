@@ -8,6 +8,10 @@ html,body {
 canvas {
   width: 100%;
   background: skyblue;
+  image-rendering: optimizeSpeed;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  
 }
 
 @font-face {

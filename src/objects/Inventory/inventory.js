@@ -71,12 +71,10 @@ export class Inventory extends GameObject {
     }
 
     hide() {
-        this.alpha = 0.0
         this.renderInventory()
     }
 
     show() {
-        this.alpha = 1.0
         this.renderInventory()
     }
 }

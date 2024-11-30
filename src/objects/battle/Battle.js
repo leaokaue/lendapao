@@ -1,3 +1,4 @@
+import { Tween } from "@tweenjs/tween.js";
 import { events } from "../../Events";
 import { GameObject } from "../../GameObject";
 import { awaitTimeout } from "../../helpers/AwaitTimeout";
@@ -6,6 +7,7 @@ import { moveTowards } from "../../helpers/MoveTowards";
 import { resources } from "../../Resource";
 import { Sprite } from "../../Sprite";
 import { Vector2 } from "../../Vector2";
+import { BattleHud } from "./BattleHud/BattleHud";
 
 export class Battle extends GameObject {
     constructor(type,enviroment,enemies) {
@@ -15,6 +17,12 @@ export class Battle extends GameObject {
         this.type = type;
         this.enviroment = enviroment;
         this.enemies = enemies;
+
+        this.canScroll = false;
+        this.bg1 = null;
+        this.bg2 = null;
+        this.bgSpeed = 120;
+        this.timeToScroll = 1000;
 
         this.transitioning = true;
         this.transitionOpaque = false;
@@ -53,6 +61,8 @@ export class Battle extends GameObject {
     step(delta,root) {
         this.handleTransition(delta);
 
+        this.parallaxBG(delta);
+
         const input = root.input;
         if (input?.getActionJustPressed("Escape")) {
             if (!this.exiting) {
@@ -60,8 +70,6 @@ export class Battle extends GameObject {
                 this.endBattle()
                 return;
             }
-
-            events.emit("END_TEXT_BOX");
         }
         
     }
@@ -84,9 +92,15 @@ export class Battle extends GameObject {
     async addBattleSprites() {
         let b = this.battleObject;
         console.log("created battle sprite")
-        const bg = new Sprite({
+        const back1 = new Sprite({
             resource : resources.images.sky,
             frameSize : new Vector2(320,180)
+        })
+
+        const back2 = new Sprite({
+            resource : resources.images.sky,
+            frameSize : new Vector2(320,180),
+            position : new Vector2(315,0)
         })
 
         const ground = new Sprite({
@@ -94,13 +108,33 @@ export class Battle extends GameObject {
             frameSize : new Vector2(320,192)
         })
 
-        const hud = new Sprite({
-            resource : resources.images.HUDTest,
-            frameSize : new Vector2(320,180)
-        })
-        await awaitTimeout(1700)
+        const hud = new BattleHud({})
 
-        b.addChild(bg);
+        this.transitioning = !false
+    
+        await awaitTimeout(200)
+
+        this.transitioning = !true
+
+        await awaitTimeout(200)
+
+        this.transitioning = !false
+
+        await awaitTimeout(150)
+
+        this.transitioning = !true
+
+        await awaitTimeout(150)
+
+        this.transitioning = !false
+
+        await awaitTimeout(1200)
+
+        b.addChild(back1);
+        b.addChild(back2);
+        this.bg1 = back1
+        this.bg2 = back2
+        this.canScroll = true;
         b.addChild(ground);
         b.addChild(hud)
 
@@ -120,6 +154,30 @@ export class Battle extends GameObject {
         this.destroy()
     }
 
+
+    parallaxBG(delta) {
+        if (!this.canScroll) return;
+
+        if (this.timeToScroll > 0) {
+            this.timeToScroll -= delta * this.bgSpeed
+        } else {
+        this.timeToScroll = 1000
+        let bg1 = this.bg1;
+
+        if (bg1.position.x > -315) {
+            bg1.position.x -= 1
+        } else {
+            bg1.position.x = 315
+        }
+
+        let bg2 = this.bg2;
+        
+        if (bg2.position.x > -315) {
+            bg2.position.x -= 1
+        } else {
+            bg2.position.x = 315
+        }}
+    }
     // fade in black screen,
 
     // show background
