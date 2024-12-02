@@ -16,7 +16,7 @@ class Resources {
             sign : "/sprites/sign.png",
             textbox : "/sprites/text-box.png",
             fontWhite : "/sprites/sprite-font-white.png",
-            fontNum : "public/sprites/numberfont-4px.png",
+            fontNum : "/sprites/numberfont-4px.png",
             portraits : "/sprites/portraits-sheet.png",
             battleTransition : "/sprites/battle/BattleTransition.png",
             battleMenuBG : "/sprites/battle/BattleMenuBG.png",
@@ -26,7 +26,16 @@ class Resources {
             battleMenuDetails : "/sprites/battle/BattleDetails.png",
             battleGround0 : "/sprites/battle/MapaBatalha0.png",
             HUDTest : "/sprites/battle/HUDTest.png",
-            barraVida : "public/sprites/battle/barras/BarraVida.png",
+            barraVida : "/sprites/battle/barras/BarraVida.png",
+            barraEscudo : "/sprites/battle/barras/BarraEscudo.png",
+            barraTempero : "/sprites/battle/barras/BarraTempero.png",
+            barraAtaque : "/sprites/battle/barras/BarraAtaque.png",
+            barraCulinaria : "/sprites/battle/barras/BarraCulinaria.png",
+            barraItem : "/sprites/battle/barras/BarraItem.png",
+            cenouro: "/sprites/cenouro.png",
+            cenouroBattle : "/sprites/battle/cenourobattle.png",
+            paoBattle : "/sprites/battle/paobattle.png"
+            
 
         }
 

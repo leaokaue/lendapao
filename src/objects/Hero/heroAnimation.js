@@ -34,6 +34,30 @@ const makeWalkingFrames = (rootFrame = 0) => {
     }
 }
 
+const makeBattleFrames = (rootFrame = 0) => {
+    return {
+        duration: 1600,
+        frames: [
+            {
+                time: 0,
+                frame: rootFrame
+            },
+            {
+                time: 400,
+                frame: rootFrame + 1
+            },
+            {
+                time: 800,
+                frame: rootFrame + 2
+            },
+            {
+                time: 1600,
+                frame: rootFrame
+            },
+        ]
+    }
+}
+
 
 export const STAND_DOWN = makeStandingFrames(1);
 export const STAND_RIGHT = makeStandingFrames(4);
@@ -45,6 +69,8 @@ export const WALK_DOWN = makeWalkingFrames(0);
 export const WALK_RIGHT = makeWalkingFrames(3);
 export const WALK_UP = makeWalkingFrames(6);
 export const WALK_LEFT = makeWalkingFrames(9);
+
+export const BATTLE_IDLE = makeWalkingFrames(0);
 
 export const PICK_UP = {
     duration : 300,

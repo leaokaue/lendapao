@@ -12,6 +12,8 @@ export class BattleButton extends GameObject {
 
         this.selected = selected ?? false;
 
+        this.inactive = false;
+
         this.position = position ?? new Vector2(0,0);
 
         this.context = context ?? "Butão";

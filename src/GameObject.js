@@ -47,9 +47,25 @@ export class GameObject {
                 return -1;
             }
 
-            if (a.drawLayer === "BATTLE") {
+            if (a.drawLayer === "DETAIL") {
+                return 5;
+            }
+
+            if (b.drawLayer === "TEXT") {
+                return -15;
+            }
+
+            if (b.drawLayer === "FG") {
+                return -10;
+            }
+
+            if (a.drawLayer === "BAR") {
                 return 1;
             }
+
+            // if (a.drawLayer === "COMBATANT") {
+            //     return 15;
+            // }
 
             // console.log(b.drawLayer)
 

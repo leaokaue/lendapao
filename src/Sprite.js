@@ -13,8 +13,11 @@ export class Sprite extends GameObject {
     position,
     animations,
     alpha,
+    drawLayer,
+    animSpeed,
     }) {
         super({});
+        this.drawLayer = drawLayer;
         this.resource = resource;
         this.frameSize = frameSize ?? new Vector2(16,16);
         this.hFrames = hFrames ?? 1;
@@ -25,6 +28,7 @@ export class Sprite extends GameObject {
         this.position = position ?? new Vector2(0,0);
         this.animations = animations ?? null;
         this.alpha = alpha ?? 1.0;
+        this.animSpeed = animSpeed ?? 1.0;
         this.buildFrameMap();
     }
     
@@ -49,7 +53,7 @@ export class Sprite extends GameObject {
             return;
         }
 
-        this.animations.step(delta);
+        this.animations.step(delta * this.animSpeed);
         this.frame = this.animations.frame;
     }
 

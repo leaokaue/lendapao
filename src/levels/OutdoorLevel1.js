@@ -54,11 +54,11 @@ export class OutdoorLevel1 extends Level {
         const npc1 = new NPC(gridCells(4),gridCells(2),{
             content: [
                 {
-                    string : "Você não pode passar.",
+                    string : "Pare de tentar.",
                     required:[TALKED_TO_A]
                 },
                 {
-                    string : "Pare de tentar.",
+                    string : "Você não pode passar.",
                     addsFlag: TALKED_TO_A
                 },
             ],

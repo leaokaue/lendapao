@@ -10,7 +10,7 @@ export class BattleText extends GameObject {
         super({});
 
         this.numFont = numFont ?? false;
-
+        this.drawLayer = "TEXT";
         this.position = position ?? new Vector2(0,0);
         this.maxWidth = 42;
         this.lineHeight = 7;

@@ -15,9 +15,11 @@ export class BattleBar extends GameObject {
         maxValue,
         horizontal,
         position,
+        drawLayer,
         }) {
         super({});
         
+        this.drawLayer = drawLayer;
         this.resource = resource ?? null;
 
         this.position = position ?? new Vector2(0,0),
@@ -29,9 +31,16 @@ export class BattleBar extends GameObject {
         this.maxValue = maxValue ?? 100;
         this.horizontal = horizontal ?? true;
 
+        this.baseFrameX = frameSize.x ?? 0;
+        this.baseFrameY = frameSize.y ?? 0;
+        
+        this.basePosX = position.x ?? 0;
+        this.basePosY = position.y ?? 0;
+
         this.barSprite = new Sprite({
             resource : this.resource,
             frameSize : this.frameSize,
+            drawLayer : "BAR",
         });
         
         this.addChild(this.barSprite);
@@ -41,6 +50,7 @@ export class BattleBar extends GameObject {
                 numFont : true,
                 position : new Vector2(numOffset ?? 0,-5),
                 text : `${this.value}/${this.maxValue}`,
+               
             })
 
             this.addChild(this.numText)
@@ -61,13 +71,18 @@ export class BattleBar extends GameObject {
     }
 
     updateBar() {
-        let targetX = Math.round((this.value / this.maxValue) * this.frameSize.x - this.frameSize.x)
-        let targety = Math.round((this.value / this.maxValue) * this.frameSize.y - this.frameSize.y) * -1
+        let targetX = Math.round((this.value / this.maxValue) * this.baseFrameX - this.baseFrameX ) * -1
+        let targetY = Math.round((this.value / this.maxValue) * this.baseFrameY)
 
         if (this.horizontal) {
-            this.barSprite.position.x = targetX
+            // this.barSprite.position.x = targetX
+            this.barSprite.frameSize.x = this.baseFrameX - targetX
         } else {
-            this.barSprite.position.y = targety
+            // this.barSprite.position.y = targety
+            // console.log(this.basePosY,this.baseFrameY,targetY)
+            this.barSprite.position.y = this.baseFrameY - targetY
+            // this.barSprite.frameSize.y = this.baseFrameY + targety
+            // this.barSprite.frameSize.y = targety
         }
 
     }
@@ -75,6 +90,7 @@ export class BattleBar extends GameObject {
     updateValue(delta) {
         this.value = lerp(this.value,this.targetValue,(delta / 1000) * 5)
         // this.value = Math.round(this.value);
+        this.targetValue = clamp(this.targetValue,-100,this.maxValue)
         this.value = clamp(this.value,0,this.maxValue)
     }
 

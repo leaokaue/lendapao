@@ -8,6 +8,11 @@ import { resources } from "../../Resource";
 import { Sprite } from "../../Sprite";
 import { Vector2 } from "../../Vector2";
 import { BattleHud } from "./BattleHud/BattleHud";
+import { Combatant } from "./Combatant";
+import { battleInfo } from "./BattleInfo";
+import { BattleHero } from "./BattleHero";
+import { BattleEnemy } from "./BattleEnemy";
+import { randiRange } from "../../helpers/Random";
 
 export class Battle extends GameObject {
     constructor(type,enviroment,enemies) {
@@ -33,8 +38,14 @@ export class Battle extends GameObject {
 
         this.exiting = false;
 
-        const battleNode = new GameObject({
+        this.hud = null;
 
+        this.player = [];
+
+        this.enemies = [];
+
+        const battleNode = new GameObject({
+            drawLayer : "HUD",
         });
 
         this.addChild(battleNode)
@@ -54,8 +65,17 @@ export class Battle extends GameObject {
     }
 
 
-    ready() {
+    async ready() {
+        events.on("BATTLE_EVENT",this, (eventCaller,callerRequest) => {
+            this.addEvent(eventCaller,callerRequest)
+        })
+
+        this.addCombatants()
         this.addBattleSprites()
+
+        await awaitTimeout(400)
+
+        this.locked = false;
     }
 
     step(delta,root) {
@@ -64,6 +84,12 @@ export class Battle extends GameObject {
         this.parallaxBG(delta);
 
         const input = root.input;
+
+        if (!this.locked) {
+            this.handleEnemyActions(delta,root);
+            this.handlePlayerActions(delta,root);
+        }
+
         if (input?.getActionJustPressed("Escape")) {
             if (!this.exiting) {
                 this.exiting = true;
@@ -71,7 +97,131 @@ export class Battle extends GameObject {
                 return;
             }
         }
+
         
+        
+    }
+
+    handleInput() {
+    
+    }
+
+
+    addCombatants() {
+        this.addPlayer()
+        this.addEnemies()
+    }
+
+    addEvent(request) {
+        const event = new BattleEvent(request,this);
+        console.log(request);
+    }
+
+    async addPlayer() {
+        let b = this.battleObject;
+
+        const h = new BattleHero({
+            ...battleInfo.player,
+            position : new Vector2(60,75),
+        },
+        this,
+        )
+
+        this.player = h;
+        await awaitTimeout(1900)
+        b.addChild(h);
+    }
+
+    async addEnemies() {
+        let b = this.battleObject;
+
+        const randi = [...Array(randiRange(1,1)).keys()]
+
+        randi.forEach((int,index) => {
+
+            const rEnemy = this.getRandomEnemy();
+            const rPosition = this.getEnemyPosition(randi.length,index);
+            const rID = this.getRandomID();
+
+            const e = new BattleEnemy({
+                ...rEnemy,
+                position : rPosition,
+                id : rID
+            },this)
+
+            this.enemies.push(e)
+        });
+
+        await awaitTimeout(1900)
+
+        this.enemies.forEach(enemy => {
+            b.addChild(enemy);
+        })
+        
+    }
+
+    getRandomEnemy() {
+        return battleInfo.enemies["carrot"]
+    }
+
+    getRandomID() {
+        return randiRange(0,10000000000);
+    }
+
+    getEnemyPosition(size,enemy) {
+        switch (size) {
+            case 1:
+                switch (enemy) {
+                    case 0:
+                        return new Vector2(260,75);
+                }
+            case 2:
+                switch (enemy) {
+                    case 0:
+                        return new Vector2(250,55);
+                    case 1:
+                        return new Vector2(260,95);
+                }
+            case 3:
+                switch (enemy) {
+                    case 0:
+                        return new Vector2(260,55);
+                    case 1:
+                        return new Vector2(270,95);
+                    case 2:
+                        return new Vector2(230,75);
+                }
+            case 4:
+                switch (enemy) {
+                    case 0:
+                        return new Vector2(270,55);
+                    case 1:
+                        return new Vector2(280,95);
+                    case 2:
+                        return new Vector2(220,50);
+                    case 3:
+                        return new Vector2(230,90);
+                }
+        }
+    }
+
+    handlePlayerActions(delta,root) {
+        if (this.locked) return;
+
+        this.handleInput()
+        this.handlePlayerCooldowns(delta,root)
+    }
+
+    handlePlayerCooldowns(delta,root) {
+
+    }
+
+    handleEnemyActions(delta,root) {
+        if (this.locked) return;
+
+        this.enemies.forEach(enemy => {
+            enemy.handleAction(delta,root)
+        })
     }
 
     handleTransition(delta) {
@@ -92,6 +242,7 @@ export class Battle extends GameObject {
     async addBattleSprites() {
         let b = this.battleObject;
         console.log("created battle sprite")
+        b.hide();
         const back1 = new Sprite({
             resource : resources.images.sky,
             frameSize : new Vector2(320,180)
@@ -107,6 +258,8 @@ export class Battle extends GameObject {
             resource : resources.images.battleGround0,
             frameSize : new Vector2(320,192)
         })
+
+
 
         const hud = new BattleHud({})
 
@@ -129,6 +282,8 @@ export class Battle extends GameObject {
         this.transitioning = !false
 
         await awaitTimeout(1200)
+
+        b.show();
 
         b.addChild(back1);
         b.addChild(back2);
@@ -165,7 +320,7 @@ export class Battle extends GameObject {
         let bg1 = this.bg1;
 
         if (bg1.position.x > -315) {
-            bg1.position.x -= 1
+            bg1.position.x -= 1.0
         } else {
             bg1.position.x = 315
         }
@@ -173,7 +328,7 @@ export class Battle extends GameObject {
         let bg2 = this.bg2;
         
         if (bg2.position.x > -315) {
-            bg2.position.x -= 1
+            bg2.position.x -= 1.0
         } else {
             bg2.position.x = 315
         }}
